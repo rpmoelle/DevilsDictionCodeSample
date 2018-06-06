@@ -1,0 +1,201 @@
+/* Rachel Moeller
+rachelpmoeller@gmail.com
+www.rachelparrishmoeller.com
+
+Scripting Sample: Devil's Diction
+
+This is a C# sample from my 2D RPG, Devil's Diction. It's an excerpt from
+the questManager script, commented for contect to show the way I structured 
+quests. I built this system to accomodate 6 quests that progress when the 
+player completes a dialogue tree with a certain NPC.
+
+This excerpt is the quest "Mudslingers," in which the leaders of two
+opposing towns in the rural American south recruit the player to play
+a malicious prank on the other.
+
+Link to the game: https://www.rachelparrishmoeller.com/devils-diction
+*/
+
+/********************************************
+         * Mudslingers
+         * *****************************************/
+//QUEST START:Player met Phantasma, the witch who serves as the mayor of the supernatural town.
+//STEP SUMMARY: Phantasma asks for Barnett's DNA in order to poison the peach orchard in the normal town
+		that serves as it's economic stability.
+	//Initialize new quest object. Quests are data structures that encapsulate the player's
+	//journal info, NPC behaviors (do they move? their default dialogue?), map markers,
+	//and the following quest at a given point. Quests are really just "quest steps" in a
+	//sort of linked list.
+        Quest Mud_01 = new Quest();
+
+	//Internal identifer so other quests can point to this one if needed.
+        Mud_01.text = Mud01;
+
+	//The text that appears in the player's journal if they complete this quest step
+        Mud_01.completionText = "Phantasma has asked me to get some of Barnett's DNA from his backyard, the courthouse, or Juke's. Any DNA will work, but she wants Barnett's.";
+       
+	//Initialize the rest of the data fields for this quest.
+	Mud_01.init();
+
+	//When the player enters an NPC's dialogue radius, this short line appears over the NPC's head to indicate
+	//they can be talked to. The associated NPC's script will check for this line.
+        Mud_01.defaultLine = "So it begins again!";
+
+	//A list of all possible lines that can appear in the player's journal after they complete this step.
+	//These change based on the player's dialogue choices. There are always four outcomes, even if those
+	//outcomes are identical, so they need to be explicitly listed in case all four outcomes are different.
+        Mud_01.completionTextList = new List<string>();
+        Mud_01.completionTextList.Add("Phantasma has asked me to get some of Barnett's DNA from his backyard, the courthouse, or Juke's. Any DNA will work, but she wants Barnett's.");
+        Mud_01.completionTextList.Add("Phantasma has asked me to get some of Barnett's DNA from his backyard, the courthouse, or Juke's. Any DNA will work, but she wants Barnett's.");
+        Mud_01.completionTextList.Add("Phantasma has asked me to get some of Barnett's DNA from his backyard, the courthouse, or Juke's. Any DNA will work, but she wants Barnett's.");
+        Mud_01.completionTextList.Add("Phantasma has asked me to get some of Barnett's DNA from his backyard, the courthouse, or Juke's. Any DNA will work, but she wants Barnett's.");
+       
+	//The next quest step, depending on the player's dialogue choices. Again, it's possible that all four
+	//are different (though not in this case), so I list all four options explicitly.
+	//The "outcome_dia" lines appear over the NPC's head when the dialogue has ended to remind the player of
+	//what happened. 
+	Mud_01.outcome1_dia = "He'd just grow it back. You can probably find some of his spit or skin in his usual haunts: the courthouse, Juke's, or even his backyard. Just look through his things. Make sure you get his DNA and not someone else's! Then bring it back.";
+        Mud_01.outcome1_quest = "Mud02";
+        Mud_01.outcome2_dia = "You ain't never revenged before, have you? You can probably find some of his spit or skin in his usual haunts: the courthouse, Juke's, or even his backyard. Just look through his things. Make sure you get his DNA and not someone else's! Then bring it back.";
+        Mud_01.outcome2_quest = "Mud02";
+        Mud_01.outcome3_dia = "If you can't take it, don't dish it. Now, you can probably find some of his spit or skin in his usual haunts: the courthouse, Juke's, or even his backyard. Just look through his things. Make sure you get his DNA and not someone else's! Then bring it back.";
+        Mud_01.outcome3_quest = "Mud02";
+        Mud_01.outcome4_dia = "The old coot can't be poisoned. Now, you can probably find some of his spit or skin in his usual haunts: the courthouse, Juke's, or even his backyard. Just look through his things. Make sure you get his DNA and not someone else's! Then bring it back.";
+        Mud_01.outcome4_quest = "Mud02";
+	
+	//This will add a special map marker. In most cases I don't use this and the map markers are moved
+	//in a separate function.
+        Mud_01.mapOverlayList.Add(null);//Barnett's house and Juke's overlay
+
+	//Add this quest to the list of quests in the game. The main game manager uses this list
+	//to determine which quest the player has selected as active, determining which map markers to show
+	//and which dialogue sets take priority (all the NPCs are involved in quests that the player could
+	//access in any order/at the same time.
+        allQuests.Add(Mud_01);
+
+//*****************************************************************************************************
+//QUEST 2
+//STEP SUMMARY:This is an optional step. Tell Barnett, mayor of the normal town, about Phantasma's plan.
+        Quest Mud_02 = new Quest();
+        Mud_02.text = Mud02;
+        Mud_02.init();
+        Mud_02.defaultLine = "So many peaches, so little time.";
+        Mud_02.completionTextList = new List<string>();
+        Mud_02.completionTextList.Add("Barnett wants me to poison Phantasma's nectarines instead. He told me to dump the poison at the standing stones in her grotto.");
+        Mud_02.completionTextList.Add("Barnett wants me to poison Phantasma's nectarines instead. He told me to dump the poison at the standing stones in her grotto.");
+        Mud_02.completionTextList.Add("Barnett wants me to poison Phantasma's nectarines instead. He told me to dump the poison at the standing stones in her grotto.");
+        Mud_02.completionTextList.Add("Barnett wants me to poison Phantasma's nectarines instead. He told me to dump the poison at the standing stones in her grotto.");
+       
+	//XXX refers to the player's name, which they set at the start of the game. A string manager will substitute
+	//the variable name before displaying the text.
+	Mud_02.outcome1_dia = "Thank you, XXX. Get her to brew the poison and pour it at the base of the two leaning stones in her grove. That will do it!";
+        Mud_02.outcome1_quest = "Mud03";
+        Mud_02.outcome2_dia = "Talk to a River Righter? Ha! Get her to brew the poison and pour it at the base of the two leaning stones in her grove. That will do it!";
+        Mud_02.outcome2_quest = "Mud03";
+        Mud_02.mapOverlayList.Add(null);
+        allQuests.Add(Mud_02);
+
+//*****************************************************************************************************
+//QUEST 3
+//STEP SUMMARY:Tell Phantasma you have the DNA. Since this step requires that the player be holding an inventory
+//item to start, the separate inventory script will check to see if the player has the DNA before marking the 
+//previous state inactive.
+	Quest Mud_03 = new Quest();
+        Mud_03.text = Mud03;
+        Mud_03.init();
+        Mud_03.defaultLine = "Yes! That two faced wheezer will never see it coming.";
+        Mud_03.completionTextList = new List<string>();
+        Mud_03.completionTextList.Add("Phantasma asked me to drop the DNA in center of the grotto pond.");
+        Mud_03.completionTextList.Add("Phantasma asked me to drop the DNA in center of the grotto pond.");
+        Mud_03.completionTextList.Add("Phantasma asked me to drop the DNA in center of the grotto pond.");
+        Mud_03.completionTextList.Add("Phantasma asked me to drop the DNA in center of the grotto pond.");
+        Mud_03.outcome1_dia = "Make sure it's Barnett's DNA! I want it to be him! When the brew is done, meet me at the peach orchard, I want to see the look on his face.";
+        Mud_03.outcome1_quest = "Mud04";//dependent on action: DNA object was in inventory, but is now not.
+        Mud_03.mapOverlayList.Add(null);//orchard overlay
+        allQuests.Add(Mud_03);
+
+//*****************************************************************************************************
+//QUEST 4
+//STEP SUMMARY: At the orchard, Phantasma asked me to put the poison in the irrigation channel.
+        Quest Mud_04 = new Quest();
+        Mud_04.text = Mud04;
+        Mud_04.init();
+        Mud_04.defaultLine = "That hose is perfect.";
+        Mud_04.completionTextList = new List<string>();
+        Mud_04.completionTextList.Add("Phantasma asked me to drop the poison in the irrigation channel.");
+        Mud_04.completionTextList.Add("Phantasma asked me to drop the poison in the irrigation channel.");
+        Mud_04.completionTextList.Add("Phantasma asked me to drop the poison in the irrigation channel.");
+        Mud_04.completionTextList.Add("Phantasma asked me to drop the poison in the irrigation channel.");
+        Mud_04.outcome1_dia = "He'll never see it coming!";
+        Mud_04.outcome1_quest = "Mud05";//****ACTION DEPENDENT: Pick up the poison.
+        Mud_04.mapOverlayList.Add(null);
+        allQuests.Add(Mud_04);
+
+//*****************************************************************************************************
+//QUEST 4b
+//QUEST END
+//STEP SUMMARY: This step is an optional branch. The player could have either poison Barnett's or Phantasma's crops
+//and this step occurs if they poison Phantasma's crops, ending the questline.At the the grotto, 
+//Phantasma is angry I poisoned her nectarines.
+	Quest Mud_04b = new Quest();
+        Mud_04b.text = Mud04b;
+        Mud_04b.init();
+        Mud_04b.defaultLine = "Ahhhhhhhhhh!";
+        Mud_04b.completionTextList = new List<string>();
+        Mud_04b.completionTextList.Add("I poisoned Phantasma's nectarines instead of Barnett's peaches.");
+        Mud_04b.completionTextList.Add("I poisoned Phantasma's nectarines instead of Barnett's peaches.");
+        Mud_04b.completionTextList.Add("I poisoned Phantasma's nectarines instead of Barnett's peaches.");
+        Mud_04b.completionTextList.Add("I poisoned Phantasma's nectarines instead of Barnett's peaches.");
+        Mud_04b.outcome1_dia = "Right. Well, you can tell sweet Barnett this isn't over. I'll be seeing the both of you.";
+       
+	//An empty string here tells the quest list that this quest branch is over. When this occurs, NPC
+	//disposition toward the player is calculated and the end quest sound/animation sequence plays.
+	Mud_04b.outcome1_quest = "";
+        Mud_04b.mapOverlayList.Add(null);
+        allQuests.Add(Mud_04b);
+
+//*****************************************************************************************************
+//QUEST 5
+//QUEST END
+//STEP SUMMARY: Occurs if the player poisoned Barnett's peaches with poison made from Barnett's DNA.
+//At the the orchard,I successfully poisoned the peaches with Barnett's DNA.
+	Quest Mud_05 = new Quest();
+        Mud_05.text = Mud05;
+        Mud_05.init();
+        Mud_05.defaultLine = "Behold our handiwork!";
+        Mud_05.completionTextList = new List<string>();
+        Mud_05.completionTextList.Add("I poisoned the peaches with Barnett's DNA. Now all the peaches are growing in the shape of his face.");
+        Mud_05.completionTextList.Add("I poisoned the peaches with Barnett's DNA. Now all the peaches are growing in the shape of his face.");
+        Mud_05.completionTextList.Add("I poisoned the peaches with Barnett's DNA. Now all the peaches are growing in the shape of his face.");
+        Mud_05.completionTextList.Add("I poisoned the peaches with Barnett's DNA. Now all the peaches are growing in the shape of his face.");
+        Mud_05.outcome1_dia = "The poison just turns the peaches into the DNA holder's face for a season. They'll go back to normal next season, hopefully without anymore ignorant posters.Thanks, XXX";
+        Mud_05.outcome1_quest = "";
+        Mud_05.mapOverlayList.Add(null);
+        allQuests.Add(Mud_05);
+
+//*****************************************************************************************************
+//QUEST 5b
+//QUEST END
+//STEP SUMMARY: Occurs if the player poisoned the peaches but used someone else's DNA to make the poison.
+//At the the orchard, I  poisoned the peaches with someone elses DNA.
+  	Quest Mud_05b = new Quest();
+        Mud_05b.text = Mud05b;
+        Mud_05b.init();
+        Mud_05b.defaultLine = "Wait a minute...";
+        Mud_05b.completionTextList = new List<string>();
+
+	//There is a specail flag here in the string manager that if this quest step is active, use the name
+	//of the DNA holder to fill the blank.
+        Mud_05b.completionTextList.Add("I poisoned the peaches with XXX's DNA. Now all the peaches are growing in the shape of their face.");
+        Mud_05b.completionTextList.Add("I poisoned the peaches with XXX's DNA. Now all the peaches are growing in the shape of their face.");
+        Mud_05b.completionTextList.Add("I poisoned the peaches with XXX's DNA. Now all the peaches are growing in the shape of their face.");
+        Mud_05b.completionTextList.Add("I poisoned the peaches with XXX's DNA. Now all the peaches are growing in the shape of their face.");
+        Mud_05b.outcome1_dia = "It was supposed to be Barnett! Ah, well, it'll still freak him out. Thanks, XXX, though, you could've done better.";
+        Mud_05b.outcome1_quest = "";
+        Mud_05b.outcome2_dia = "Ah, well, it'll still freak him out. Thanks, XXX, though, you could've done better.";
+        Mud_05b.outcome2_quest = "";
+        Mud_05b.mapOverlayList.Add(null);
+        Mud_05b.mapOverlayList.Add(null);
+        Mud_05b.mapOverlayList.Add(null);
+        Mud_05b.mapOverlayList.Add(null);
+        allQuests.Add(Mud_05b);
