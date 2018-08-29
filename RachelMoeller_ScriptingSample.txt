@@ -5,7 +5,7 @@ www.rachelparrishmoeller.com
 Scripting Sample: Devil's Diction
 
 This is a C# sample from my 2D RPG, Devil's Diction. It's an excerpt from
-the questManager script, commented for contect to show the way I structured 
+the questManager script, commented for context to show the way I structured 
 quests. I built this system to accomodate 6 quests that progress when the 
 player completes a dialogue tree with a certain NPC.
 
